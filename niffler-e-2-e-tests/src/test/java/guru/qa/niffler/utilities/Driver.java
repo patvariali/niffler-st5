@@ -44,6 +44,15 @@ public class Driver {
         return driverPool.get();
 
     }
+    public static <T> T open(String url, Class<T> pageClass) {
+        getDriver().get(url);
+        try {
+            return pageClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static void closeDriver(){
         if (driverPool.get()!=null){

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class CategoryExtension implements BeforeEachCallback {
 
-    private static final ExtensionContext.Namespace NAMESPACE
+    public static final ExtensionContext.Namespace NAMESPACE
             = ExtensionContext.Namespace.create(CategoryExtension.class);
 
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
@@ -40,9 +40,11 @@ public class CategoryExtension implements BeforeEachCallback {
                             category.category(),
                             category.username()
                     );
+
                     try {
                         CategoryJson result = categoryApi.createCategory(categoryJson).execute().body();
-                        context.getStore(NAMESPACE).put("category", result);
+
+                        context.getStore(NAMESPACE).put(context.getUniqueId(), result);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

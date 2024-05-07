@@ -29,6 +29,9 @@ public class MainPage {
     @FindBy(xpath = "//a[@href='/profile']")
     private WebElement myProfile;
 
+    @FindBy(xpath = "//a[@href='/people']")
+    private WebElement allPeople;
+
     @FindBy(xpath = "//div[@data-tooltip-id='logout']/button")
     private WebElement logoutBtn;
 
@@ -59,8 +62,9 @@ public class MainPage {
         return null;
     }
 
-    public MainPage chooseRow(WebElement row) {
-        row.findElement(By.xpath("./td")).click();
+    public MainPage chooseRow(String description) {
+        findSpendByDescription(description)
+                .findElement(By.xpath("./td")).click();
         return this;
     }
 
@@ -74,7 +78,7 @@ public class MainPage {
         assertTrue(spendDeleteAlert.isDisplayed());
     }
 
-    public void scrollToButtom() {
+    public MainPage scrollToButtom() {
         JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
 
         header.click();
@@ -83,7 +87,11 @@ public class MainPage {
             js.executeScript("window.scrollTo(0, document.documentElement.scrollHeight)");
             wait.until(ExpectedConditions.visibilityOfAllElements(spendingRows));
         }
-
+        return this;
     }
 
+    public AllPeoplePage goToAllPeople() {
+        allPeople.click();
+        return new AllPeoplePage();
+    }
 }

@@ -16,8 +16,9 @@ public class AuthPage {
     @FindBy(xpath = "//a[.='Register']")
     private WebElement registerBtn;
 
-    public void loginClick() {
+    public LoginPage loginClick() {
         loginBtn.click();
+        return new LoginPage();
     }
 
     public void registerClick() {

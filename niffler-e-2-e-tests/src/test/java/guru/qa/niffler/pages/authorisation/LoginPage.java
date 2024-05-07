@@ -1,5 +1,6 @@
 package guru.qa.niffler.pages.authorisation;
 
+import guru.qa.niffler.pages.MainPage;
 import guru.qa.niffler.utilities.Driver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -34,4 +35,8 @@ public class LoginPage {
         signInBtn.click();
     }
 
+    public MainPage doLogin(String username, String password) {
+        sendUsername(username).sendPassword(password).clickSignIn();
+        return new MainPage();
+    }
 }
