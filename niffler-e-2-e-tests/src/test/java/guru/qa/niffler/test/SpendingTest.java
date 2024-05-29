@@ -12,24 +12,27 @@ import guru.qa.niffler.utilities.Driver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 @WebTest
 public class SpendingTest {
 
     private final MainPage mainPage = new MainPage();
+
     static {
         Configuration.browserSize = "1920x1080";
     }
 
     @BeforeEach
     void doLogin() {
-        Driver.open("http://127.0.0.1:3000/main", AuthPage.class)
+        Objects.requireNonNull(Driver.open("http://127.0.0.1:3000/main", AuthPage.class))
                 .loginClick()
-                .doLogin("ali2", "12345");
+                .doLogin("ali3", "12345");
     }
 
     @GenerateCategory(
-            username = "ali2",
-            category = "Обучение5"
+            username = "ali3",
+            category = "Обучение1002  "
     )
     @GenerateSpend(
             description = "QA.GURU Advanced 5",
@@ -43,4 +46,5 @@ public class SpendingTest {
                 .deleteSpend()
                 .checkIfDeleted();
     }
+
 }

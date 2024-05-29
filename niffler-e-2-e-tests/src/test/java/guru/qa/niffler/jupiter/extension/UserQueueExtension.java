@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -41,18 +40,14 @@ public class UserQueueExtension implements
 
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
 
-        List<Method> allMethods = Stream.concat(
+        List<User> usersTypeList = Stream.concat(
                         Arrays.stream(
                                         context.getRequiredTestClass().getDeclaredMethods())
                                 .filter(p -> p.isAnnotationPresent(BeforeEach.class)),
                         Stream.of(
                                 context.getRequiredTestMethod()))
-                .toList();
-
-
-        List<User> usersTypeList = allMethods.stream()
                 .flatMap(p -> Arrays.stream(p.getParameters()))
                 .filter(p -> AnnotationSupport.isAnnotated(p, User.class))
                 .map(p -> p.getAnnotation(User.class))
@@ -77,18 +72,18 @@ public class UserQueueExtension implements
                 userJsons.add(userForTest);
                 users.put(userType, userJsons);
             } else {
-                users.put(userType, List.of(userForTest));
+                users.put(userType, new ArrayList<>(List.of(userForTest)));
             }
         }
 
-        Allure.getLifecycle().updateTestCase(testCase -> {
-            testCase.setStart(new Date().getTime());
-        });
+        Allure.getLifecycle().updateTestCase(testCase ->
+                testCase.setStart(new Date().getTime())
+        );
         context.getStore(NAMESPACE).put(context.getUniqueId(), users);
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) {
         Map<User.UserType, List<UserJson>> userFormTest = context.getStore(NAMESPACE).get(context.getUniqueId(), Map.class);
 
         if (userFormTest != null) {
@@ -126,10 +121,10 @@ public class UserQueueExtension implements
 
         if (userJsonList != null && !userJsonList.isEmpty()) {
 
-            if (map.get(annotation).size() > 1) {
+            if (userJsonList.size() > 1) {
                 resultUser = userJsonList.getFirst();
                 userJsonList.remove(resultUser);
-            }else {
+            } else {
                 resultUser = userJsonList.getFirst();
             }
         }
