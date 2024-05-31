@@ -3,9 +3,17 @@ package guru.qa.niffler.data.repository;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 
+import java.util.List;
+import java.util.UUID;
+
 public class SpendRepositoryHibernate implements SpendRepository{
     @Override
     public CategoryEntity findByUsernameAndCategory(String username, String category) {
+        return null;
+    }
+
+    @Override
+    public CategoryEntity findByUsernameAndCategoryId(String username, UUID categoryId) {
         return null;
     }
 
@@ -37,5 +45,10 @@ public class SpendRepositoryHibernate implements SpendRepository{
     @Override
     public void removeSpend(SpendEntity spend) {
 
+    }
+
+    @Override
+    public List<SpendEntity> findAllByUsername(String username) {
+        return null;
     }
 }

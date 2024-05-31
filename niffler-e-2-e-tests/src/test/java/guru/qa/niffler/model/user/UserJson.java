@@ -35,12 +35,40 @@ public record UserJson(
                         username,
                         null,
                         null,
+                        CurrencyValues.EUR,
                         null,
                         null,
                         null,
-                        null,
-                        new TestData(password)
+                        new TestData(password, null)
                 );
         }
 
+        public static UserJson simpleUser (String username, String password, UUID id, UUID userDataTableId) {
+                return new UserJson(
+                        id,
+                        username,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        new TestData(password, userDataTableId)
+                );
+        }
+
+        @Override
+        public String toString() {
+                return "UserJson{" +
+                        "id=" + id +
+                        ", username='" + username + '\'' +
+                        ", firstname='" + firstname + '\'' +
+                        ", surname='" + surname + '\'' +
+                        ", currency=" + currency +
+                        ", photo='" + photo + '\'' +
+                        ", photoSmall='" + photoSmall + '\'' +
+                        ", friendState=" + friendState +
+                        ", testData=" + testData +
+                        '}';
+        }
 }

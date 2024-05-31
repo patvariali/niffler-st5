@@ -4,9 +4,12 @@ import guru.qa.niffler.data.DataBase;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.model.CurrencyValues;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -22,6 +25,32 @@ public class SpendRepositoryJdbc implements SpendRepository{
         )){
             ps.setString(1, username);
             ps.setString(2, category);
+
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    CategoryEntity categoryEntity = new CategoryEntity();
+                    categoryEntity.setUsername(rs.getString("username"));
+                    categoryEntity.setCategory(rs.getString("category"));
+                    categoryEntity.setId(UUID.fromString(rs.getString("id")));
+                    return categoryEntity;
+                } else {
+                    throw new NoSuchElementException("Can't find category by username and category");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CategoryEntity findByUsernameAndCategoryId(String username, UUID categoryId) {
+        try (Connection conn = spendDataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT * FROM \"category\" WHERE username = ? AND id = ?"
+             )){
+            ps.setString(1, username);
+            ps.setObject(2, categoryId);
 
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -157,12 +186,47 @@ public class SpendRepositoryJdbc implements SpendRepository{
     public void removeSpend(SpendEntity spend) {
         try (Connection conn = spendDataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(
-                     "DELETE FROM \"spend\" where id = ?"
+                     "DELETE FROM \"spend\" WHERE id = ?"
              )) {
 
             ps.setObject(1, spend.getId());
             ps.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<SpendEntity> findAllByUsername(String username) {
+        try (Connection con = spendDataSource.getConnection();
+        PreparedStatement ps = con.prepareStatement(
+                """
+                        SELECT * FROM spend WHERE username = ?
+                        """
+        )) {
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                List<SpendEntity> listAllSpend = new ArrayList<>();
+
+                while (rs.next()) {
+                    CategoryEntity currentCategory = findByUsernameAndCategoryId(username, (UUID) rs.getObject("category_id"));
+
+                    SpendEntity currentSpend = new SpendEntity();
+                    currentSpend.setId((UUID) rs.getObject("id"));
+                    currentSpend.setUsername(rs.getString("username"));
+                    currentSpend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+                    currentSpend.setSpendDate(new java.util.Date(((Date)rs.getObject("spend_date")).getTime()));
+                    currentSpend.setAmount(rs.getDouble("amount"));
+                    currentSpend.setDescription(rs.getString("description"));
+                    currentSpend.setCategoryEntity(currentCategory);
+
+                    listAllSpend.add(currentSpend);
+                }
+                return listAllSpend;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

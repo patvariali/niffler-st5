@@ -1,4 +1,6 @@
 package guru.qa.niffler.model;
 
-public record TestData(String password) {
+import java.util.UUID;
+
+public record TestData(String password, UUID userDataTableId) {
 }

@@ -20,14 +20,13 @@ public abstract class AbstractCategoryExtension implements BeforeEachCallback, A
                 GenerateCategory.class
         ).ifPresent(
                 cat -> {
-                    CategoryEntity categoryEntity = new CategoryEntity();
 
-                    categoryEntity.setCategory(cat.category());
-                    categoryEntity.setUsername(cat.username());
+                    CategoryJson json = new CategoryJson(
+                            null,
+                            cat.category(),
+                            cat.username());
 
-                    CategoryJson categoryJson = createCategory(CategoryJson.fromEntity(categoryEntity));
-
-                    context.getStore(NAMESPACE).put(context.getUniqueId(), categoryJson);
+                    context.getStore(NAMESPACE).put(context.getUniqueId(), createCategory(json));
                 }
         );
     }

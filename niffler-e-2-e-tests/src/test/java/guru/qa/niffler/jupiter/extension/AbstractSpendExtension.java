@@ -33,9 +33,7 @@ public abstract class AbstractSpendExtension implements BeforeEachCallback, Para
                             category.username()
                     );
 
-                    SpendJson result = createSpend(spendJson);
-
-                    extensionContext.getStore(NAMESPACE).put(extensionContext.getUniqueId(), result);
+                    extensionContext.getStore(NAMESPACE).put(extensionContext.getUniqueId(), createSpend(spendJson));
 
                 }
         );
